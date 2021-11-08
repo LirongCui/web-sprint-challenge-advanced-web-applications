@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import articleServices from '../services/articleServices';
+import { axiosWithAuth } from '../utils/axiosWithAuth';
 import styled from 'styled-components';
 
 const initialArticle = {
@@ -10,15 +12,14 @@ const initialArticle = {
 };
 
 const EditForm = (props)=> {
+    const {editId, handleEdit, handleEditCancel} = props;
     const [article, setArticle]  = useState(initialArticle);
-    const {handleEdit, handleEditCancel, editId} = props;
 
     useEffect(() => {
-        axiosWithAuth()
-            .delete(`/articles/${editId}`)
-            .then(res=> {
-                setArticle(res.data)
-            })
+        articleServices()
+        .then((res) => {
+            console.log(res.data);
+        })
             .catch(err=> console.log(err))
     }, []);
 
@@ -27,11 +28,17 @@ const EditForm = (props)=> {
             ...article,
             [e.target.name]: e.target.value
         })
+        console.log(article)
     }
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        handleEdit(article);
+        axiosWithAuth()
+        .put(`/articles/${editId}`, article)
+        .then(res=> {
+            console.log(res)
+        })
+        .catch(err=> console.log(err))
     }
 
 
@@ -40,7 +47,7 @@ const EditForm = (props)=> {
         handleEditCancel();
     }
 
-    return(<FormContainer onSubmit={handleSubmit}>
+    return(<FormContainer>
         <h3>Edit Article</h3>
         <div>
             <label>Headline</label>
@@ -58,7 +65,7 @@ const EditForm = (props)=> {
             <label>Body</label>
             <input value={article.body} id="body" name="body" onChange={handleChange}/>
         </div>
-        <Button id="editButton">Edit Article</Button>
+        <Button  onClick={handleSubmit} id="editButton">Edit Article</Button>
         <Button onClick={handleCancel}>Cancel</Button>
     </FormContainer>);
 }

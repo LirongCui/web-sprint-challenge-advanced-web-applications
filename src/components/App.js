@@ -8,6 +8,7 @@ import LambdaHeader from './LambdaHeader';
 import View from './View';
 import Login from './Login';
 import Logout from './Logout';
+import EditForm from './EditForm';
 
 const App = () => {
   return (
@@ -22,7 +23,8 @@ const App = () => {
         <Login/>
       </Route>  
       <PrivateRoute exact path="/view" component={View}/> 
-      <PrivateRoute exact path="/logout" component={Logout}/>     
+      <PrivateRoute exact path="/logout" component={Logout}/>
+      <PrivateRoute exact path="/articles/:id" component={EditForm}/> 
       </RouteContainer>
     </AppContainer>
   )
