@@ -13,6 +13,15 @@ const EditForm = (props)=> {
     const [article, setArticle]  = useState(initialArticle);
     const {handleEdit, handleEditCancel, editId} = props;
 
+    useEffect(() => {
+        axiosWithAuth()
+            .delete(`/articles/${editId}`)
+            .then(res=> {
+                setArticle(res.data)
+            })
+            .catch(err=> console.log(err))
+    }, []);
+
     const handleChange = (e)=> {
         setArticle({
             ...article,

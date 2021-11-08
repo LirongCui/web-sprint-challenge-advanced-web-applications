@@ -1,12 +1,47 @@
-import React from 'react';
+import React, { useState } from 'react';
+import axios from 'axios';
+import { useHistory } from 'react-router';
 import styled from 'styled-components';
 
+const initialValues = { username: "", password: "" };
+
 const Login = () => {
+    const { push } = useHistory();
+    const [formValues, setFormValues] = useState(initialValues);
+    const [error, setError] = useState(false);
+
+    const handleChanges = (e) => {
+        setFormValues({ ...formValues, [e.target.name]: e.target.value,
+        });
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        axios
+            .post("http://localhost:5000/api/login", formValues)
+            .then((res) => {
+                window.localStorage.setItem('token', res.data.token);
+                push("/view");
+            })
+            .catch(setError(true));
+    };
     
     return(<ComponentContainer>
         <ModalContainer>
             <h1>Welcome to Blogger Pro</h1>
             <h2>Please enter your account information.</h2>
+
+            <form onSubmit={handleSubmit}>
+                <label htmlFor='username'>Username: </label>
+                <input id='username' name='username' value={formValues.username} onChange={handleChanges}/>
+                <label htmlFor='password'>Password: </label>
+                <input id='password' name='password' type='password' value={formValues.password} onChange={handleChanges}/>
+                <button id="submit">Login!</button>
+            </form>
+            {error && (
+                <p id ="error">Login Failed! Please try again!</p>
+            )}
+
         </ModalContainer>
     </ComponentContainer>);
 }
